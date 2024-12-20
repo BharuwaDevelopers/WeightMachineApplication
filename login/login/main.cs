@@ -13,7 +13,7 @@ using System.Data.SqlClient;
 using System.Threading;
 using NPOI.SS.Util;
 using System.Text.RegularExpressions;
-
+using System.Drawing.Printing;
 
 namespace login
 {
@@ -945,9 +945,9 @@ namespace login
             veh_no = Vehical_box.Text;
             //Print.slip_print_frm slip_Print_Frm = new Print.slip_print_frm();
             //slip_Print_Frm.Show();
-            slpprintPreviewDialog1.Document = slpprintDocument1;
-            slpprintPreviewDialog1.Height = 1;
-            slpprintPreviewDialog1.Width = 1;
+            //slpprintPreviewDialog1.Document = slpprintDocument1;
+            //slpprintPreviewDialog1.Height = 1;
+            //slpprintPreviewDialog1.Width = 1;
 
             SqlConnection db_connect = new SqlConnection(db_Connection.connection_string());
             db_connect.Open();
@@ -977,28 +977,39 @@ namespace login
                 }
             }
 
-            slpprintPreviewDialog1.ShowDialog();
+            // slpprintPreviewDialog1.ShowDialog();
 
-
+            System.Drawing.Printing.PrintDocument printDocument = new PrintDocument();
+            // Set custom page size (Width x Height in inches)
+            PaperSize customPaperSize = new PaperSize("Custom Size", 750, 550); // Width = 850px, Height = 1100px
+            printDocument.DefaultPageSettings.PaperSize = customPaperSize;
+            // You can also set other page properties, like margins, if needed
+            printDocument.DefaultPageSettings.Margins = new Margins(10, 10, 10, 10);
+            // Attach the PrintPage event
+            printDocument.PrintPage += slpprintDocument1_PrintPage;
+            // Create and configure the PrintPreviewDialog
+            PrintPreviewDialog printPreviewDialog = new PrintPreviewDialog();
+            printPreviewDialog.Document = printDocument;
+            // Set the size of the print preview dialog
+            printPreviewDialog.Width = 800;  // Set the width of the dialog (in pixels)
+            printPreviewDialog.Height = 700; // Set the height of the dialog (in pixels)
+            // Optionally, you can set the dialog's location on the screen
+            printPreviewDialog.StartPosition = FormStartPosition.CenterScreen;
+            // Show the PrintPreviewDialog
+            printPreviewDialog.ShowDialog();
 
         }
 
         private void slpprintDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
-
             // e.Graphics.DrawString(label1.Text, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(250, 25));
             //e.Graphics.DrawString(addressalble.Text, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(225, 50));
             string m_status = "Active";
-
             SqlConnection db_connect = new SqlConnection(db_Connection.connection_string());
             db_connect.Open();
             SqlDataAdapter sda = new SqlDataAdapter("Select plant_name,address from machine_master where m_status='" + m_status + "' ", db_connect);
             DataTable dt = new DataTable();
             sda.Fill(dt);
-
-
-
-
             Console.WriteLine("value of plant name" + dt.Rows[0][0]);
             Console.WriteLine("value of plant name" + dt.Rows[0][1]);
             // string watermark = "Orignal Print";
@@ -1026,26 +1037,23 @@ namespace login
             //e.PageSettings.PaperSize.Width = 214;
             //e.PageSettings.PaperSize.Height= 105;
             //  e.PageSettings.PrinterSettings.DefaultPageSettings.PaperSize = ;
-            e.Graphics.DrawString("Vehical No:  " + veh_no, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(500, 250));
-            e.Graphics.DrawString("Create Date:  " + cr_date, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(500, 300));
-            e.Graphics.DrawString("Final Date:  " + mdate, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(500, 350));
-            e.Graphics.DrawString(dt.Rows[0][0].ToString(), new Font("Arial", 12, FontStyle.Bold), Brushes.Black, new Point(200, 25));
-            e.Graphics.DrawString(dt.Rows[0][1].ToString(), new Font("Arial", 9, FontStyle.Bold), Brushes.Black, new Point(125, 50));
+            e.Graphics.DrawString("Vehical No:  " + veh_no, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 250));
+            e.Graphics.DrawString("Create Date:  " + cr_date, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 300));
+            e.Graphics.DrawString("Final Date:  " + mdate, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 350));
+            e.Graphics.DrawString(dt.Rows[0][0].ToString(), new Font("Arial", 12, FontStyle.Bold), Brushes.Black, new Point(150, 25));
+            e.Graphics.DrawString(dt.Rows[0][1].ToString(), new Font("Arial", 9, FontStyle.Bold), Brushes.Black, new Point(90, 50));
             e.Graphics.DrawString("Slip No:  " + main.prn_slipno, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 100));
-            e.Graphics.DrawString("Party Name:  " + main.prn_partyname, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(500, 100));
+            e.Graphics.DrawString("Party Name:  " + main.prn_partyname, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 100));
             e.Graphics.DrawString("Challan No:  " + main.t_no, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 150));
-            e.Graphics.DrawString("Product:  " + main.prn_product, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(500, 150));
+            e.Graphics.DrawString("Product:  " + main.prn_product, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 150));
             e.Graphics.DrawString("Vehicle Type:  " + main.prn_vehicle_type, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 200));
-            e.Graphics.DrawString("Charges:  " + main.prn_charges, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(500, 200));
-            e.Graphics.DrawString("Operator Name:  " + main.prn_op_name, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(500, 400));
+            e.Graphics.DrawString("Charges:  " + main.prn_charges, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 200));
+            e.Graphics.DrawString("Operator Name:  " + main.prn_op_name, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 400));
             e.Graphics.DrawString("Operator Sign:  ", new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 400));
             e.Graphics.DrawString("Tare Weight:  " + main.prn_t_weight, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 250));
             e.Graphics.DrawString("Gross Weight:  " + main.prn_g_weight, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 300));
             e.Graphics.DrawString("Net Weight:  " + main.prn_n_weight, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 350));
-
-
-
-
+            //refresh----------------
             slipno_box.Clear();
             weight_box.Clear();
             tire_weight_box.Clear();
@@ -1059,7 +1067,6 @@ namespace login
             Party_box.Clear();
             net_weight_box.Clear();
             tokenNo_box.Clear();
-
 
 
         }
