@@ -1041,7 +1041,20 @@ namespace login
             e.Graphics.DrawString("Create Date:  " + cr_date, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 300));
             e.Graphics.DrawString("Final Date:  " + mdate, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 350));
             e.Graphics.DrawString(dt.Rows[0][0].ToString(), new Font("Arial", 12, FontStyle.Bold), Brushes.Black, new Point(150, 25));
-            e.Graphics.DrawString(dt.Rows[0][1].ToString(), new Font("Arial", 9, FontStyle.Bold), Brushes.Black, new Point(90, 50));
+           // e.Graphics.DrawString(dt.Rows[0][1].ToString(), new Font("Arial", 9, FontStyle.Bold), Brushes.Black, new Point(90, 50));
+            // Define the font and header text
+            string headerText = dt.Rows[0][1].ToString();
+            Font headerFont = new Font("Arial", 9, FontStyle.Bold);
+            // Set the starting point for the header
+            PointF headerPoint = new PointF(70, 50);
+            // Draw the header text
+            e.Graphics.DrawString(headerText, headerFont, Brushes.Black, headerPoint);
+            // Measure the size of the header text to calculate the underline position
+            SizeF headerSize = e.Graphics.MeasureString(headerText, headerFont);
+            // Draw a line underneath the header
+            float underlineY = headerPoint.Y + headerSize.Height + 5;  // 5 pixels below the header
+            e.Graphics.DrawLine(Pens.Black, headerPoint.X, underlineY, headerPoint.X + headerSize.Width, underlineY);
+            // Optional: You can add more content below the header if needed
             e.Graphics.DrawString("Slip No:  " + main.prn_slipno, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 100));
             e.Graphics.DrawString("Party Name:  " + main.prn_partyname, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(350, 100));
             e.Graphics.DrawString("Challan No:  " + main.t_no, new Font("Arial", 12, FontStyle.Regular), Brushes.Black, new Point(25, 150));
